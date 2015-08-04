@@ -11,6 +11,30 @@ init:
     {
         $env:BuildVersion = $matches[0]
         $env:IsGithubRelease = $TRUE
+
+        try
+        {
+            $origin = git config --get remote.origin.url
+
+            if ($origin -like "https://github.com/*.git")
+            {
+            $releaseUrl = $origin.TrimStart("https://github.com").TrimEnd(".git")
+            $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
+
+            $resp = invoke-webrequest $releaseUrl
+            $release = $resp.Content | ConvertFrom-Json
+
+            $nuspecPath = (Get-ChildItem -Filter *.nuspec -Recurse )[0].FullName
+            [xml]$nuspec = Get-Content $nuspecPath
+
+            $nuspec.package.metadata.releaseNotes = $release.Body
+
+            $nuspec.Save( $nuspecPath )
+            }
+        }
+        catch 
+        {
+        }
     }
     else 
     {
@@ -56,3 +80,4 @@ deploy:
   on:
     branch: master
     IsGithubRelease: true
+
