@@ -24,8 +24,6 @@ install:
 - ps: >-
     try
     {
-        If($env:IsGithubRelease)
-        {
             echo (Get-ChildItem -Filter .git -Recurse -Force)[0].FullName
             $origin = git config --get remote.origin.url
 
@@ -53,7 +51,6 @@ install:
                 echo "Saving updated nuspec"
                 $nuspec.Save( $nuspecPath )
             }
-        }
     }
     catch 
     {
