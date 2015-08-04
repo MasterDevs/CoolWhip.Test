@@ -32,8 +32,12 @@ install:
             if ($origin -like "https://github.com/*.git")
             {
                 $startToTrim = "https://github.com/"
+                $endToTrim = ".git"
+
                 Write-Host "Origin matches github pattern" $origin
                 $releaseUrl = $origin.TrimStart($startToTrim).TrimEnd(".git")
+                $releaseUrl = $origin.Substring($startToTrim.Length, $origin.Length - $startToTrim.Length - $endToTrim.Length)
+                
                 Echo "Release url 1:  " $releaseUrl
                 $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
 
