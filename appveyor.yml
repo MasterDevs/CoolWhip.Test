@@ -16,24 +16,32 @@ init:
         {
             $origin = git config --get remote.origin.url
 
+            Write-Host "Origin:  " $origin
+
             if ($origin -like "https://github.com/*.git")
             {
-            $releaseUrl = $origin.TrimStart("https://github.com").TrimEnd(".git")
-            $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
+                Write-Host "Origin matches github pattern"
+                $releaseUrl = $origin.TrimStart("https://github.com").TrimEnd(".git")
+                $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
 
-            $resp = invoke-webrequest $releaseUrl
-            $release = $resp.Content | ConvertFrom-Json
+                $resp = invoke-webrequest $releaseUrl
+                $release = $resp.Content | ConvertFrom-Json
 
-            $nuspecPath = (Get-ChildItem -Filter *.nuspec -Recurse )[0].FullName
-            [xml]$nuspec = Get-Content $nuspecPath
+                echo "Release notes:  " $release.Body
 
-            $nuspec.package.metadata.releaseNotes = $release.Body
+                $nuspecPath = (Get-ChildItem -Filter *.nuspec -Recurse )[0].FullName
+                echo "getting nuspec from " $nuspecPath
+                [xml]$nuspec = Get-Content $nuspecPath
 
-            $nuspec.Save( $nuspecPath )
+                $nuspec.package.metadata.releaseNotes = $release.Body
+                echo $nuspec
+                echo "Saving updated nuspec"
+                $nuspec.Save( $nuspecPath )
             }
         }
         catch 
         {
+            Write-Host $_.Exception.GetType().FullName, $_.Exception.Message
         }
     }
     else 
