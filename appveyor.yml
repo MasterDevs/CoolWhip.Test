@@ -24,7 +24,8 @@ install:
 - ps: >-
     try
     {
-            echo (Get-ChildItem -Filter .git -Recurse -Force)[0].FullName
+        if($env:IsGithubRelease)
+        {
             $origin = git config --get remote.origin.url
 
             Write-Host "Origin:  " $origin
@@ -38,24 +39,19 @@ install:
                 $releaseUrl = $origin.TrimStart($startToTrim).TrimEnd(".git")
                 $releaseUrl = $origin.Substring($startToTrim.Length, $origin.Length - $startToTrim.Length - $endToTrim.Length)
                 
-                Echo "Release url 1:  " $releaseUrl
-                $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
+                $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases/" + $env:APPVEYOR_REPO_TAG_NAME
 
-                Echo "Release url 2:  " $releaseUrl
                 $resp = invoke-webrequest $releaseUrl
                 $release = $resp.Content | ConvertFrom-Json
 
-                echo "Release notes:  " $release.Body
 
                 $nuspecPath = (Get-ChildItem -Filter *.nuspec -Recurse )[0].FullName
-                echo "getting nuspec from " $nuspecPath
                 [xml]$nuspec = Get-Content $nuspecPath
 
                 $nuspec.package.metadata.releaseNotes = $release.Body
-                echo $nuspec
-                echo "Saving updated nuspec"
                 $nuspec.Save( $nuspecPath )
             }
+        }
     }
     catch 
     {
