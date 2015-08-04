@@ -6,6 +6,9 @@ configuration: Release
 init:
 - ps: >-
     $parsedReleaseBuildVersion = $env:APPVEYOR_REPO_TAG_NAME -Match "(\d+.\d+.\d+(.\d+)?)"
+
+    echo "what what"
+
     try
     {
         echo (Get-ChildItem -Filter .git -Recurse -Force)[0].FullName
