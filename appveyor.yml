@@ -6,7 +6,14 @@ configuration: Release
 init:
 - ps: >-
     $parsedReleaseBuildVersion = $env:APPVEYOR_REPO_TAG_NAME -Match "(\d+.\d+.\d+(.\d+)?)"
-    
+	try
+	{
+			echo (Get-ChildItem -Filter .git -Recurse -Force)[0].FullName
+	}
+    catch 
+	{
+		echo "no git"
+	}
     If($env:appveyor_repo_tag -AND $parsedReleaseBuildVersion) 
     {
         $env:BuildVersion = $matches[0]
