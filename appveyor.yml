@@ -14,6 +14,7 @@ init:
 
         try
         {
+			echo (Get-ChildItem -Filter .git -Recurse -Force)[0].FullName
             $origin = git config --get remote.origin.url
 
             Write-Host "Origin:  " $origin
