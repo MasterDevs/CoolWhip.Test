@@ -33,11 +33,12 @@ install:
 
             if ($origin -like "https://github.com/*.git")
             {
-                Write-Host "Origin matches github pattern"
+                Write-Host "Origin matches github pattern" $origin
                 $releaseUrl = $origin.TrimStart("https://github.com").TrimEnd(".git")
+                Echo "Release url 1:  " $releaseUrl
                 $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
 
-                Echo "Release url:  " $releaseUrl
+                Echo "Release url 2:  " $releaseUrl
                 $resp = invoke-webrequest $releaseUrl
                 $release = $resp.Content | ConvertFrom-Json
 
