@@ -37,6 +37,7 @@ install:
                 $releaseUrl = $origin.TrimStart("https://github.com").TrimEnd(".git")
                 $releaseUrl = "https://api.github.com/repos/" + $releaseUrl + "/releases" + $env:APPVEYOR_REPO_TAG_NAME
 
+                Echo "Release url:  " $releaseUrl
                 $resp = invoke-webrequest $releaseUrl
                 $release = $resp.Content | ConvertFrom-Json
 
