@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CoolWhipReadMe.md" />
+    <None Include="MasterDevs.CoolWhip.Test.nuspec" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
