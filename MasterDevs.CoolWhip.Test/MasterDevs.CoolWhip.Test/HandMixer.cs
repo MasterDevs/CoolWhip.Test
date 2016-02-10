@@ -6,7 +6,7 @@
         {
             if (ingredient1 == "cream" && ingredient2 == "sugar")
             {
-            return "Cool Whip";
+                return "Cool Whip";
             }
 
             return "That's not how you make cool whip!";
